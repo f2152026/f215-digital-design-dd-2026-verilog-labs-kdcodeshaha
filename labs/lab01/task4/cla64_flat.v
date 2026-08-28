@@ -7,9 +7,9 @@ module cla64_flat(
 );
 
   wire [63:0] p, g;
-  wire [64:1] c;   // c[1]..c[64] are the 64 carries; think of cin as c[0]
+  wire [64:1] c;   // c[1]..c[64] are the 64 carries; cin is c[0]
 
-  // Step 1: generate/propagate signals
+  // Step 1: P and G logic
   genvar i;
   generate
     for (i = 0; i < 64; i = i + 1) begin : gen_pg
@@ -18,25 +18,16 @@ module cla64_flat(
     end
   endgenerate
 
-  // Step 2: direct carry equations using continuous assignments with #(2) delay
-  // c[1] = g[0] | (p[0] & cin)
+  // Step 2: Write/generate assign #(2) c[1] through c[64]
   assign #(2) c[1] = g[0] | (p[0] & cin);
-  
-  // c[2] = g[1] | (p[1] & g[0]) | (p[1] & p[0] & cin)
   assign #(2) c[2] = g[1] | (p[1] & g[0]) | (p[1] & p[0] & cin);
-  
-  // c[3] = g[2] | (p[2] & g[1]) | (p[2] & p[1] & g[0]) | (p[2] & p[1] & p[0] & cin)
   assign #(2) c[3] = g[2] | (p[2] & g[1]) | (p[2] & p[1] & g[0]) | (p[2] & p[1] & p[0] & cin);
-  
-  // c[4] = g[3] | (p[3] & g[2]) | (p[3] & p[2] & g[1]) | (p[3] & p[2] & p[1] & g[0]) | (p[3] & p[2] & p[1] & p[0] & cin)
   assign #(2) c[4] = g[3] | (p[3] & g[2]) | (p[3] & p[2] & g[1]) | (p[3] & p[2] & p[1] & g[0]) | (p[3] & p[2] & p[1] & p[0] & cin);
-
-  // Extend the expansion pattern for c[5] through c[64]
-  // (For simulation purposes in Task 4, c[64] represents full carry expansion)
+  // ... (c[5] through c[64] must all be assigned)
 
   assign cout = c[64];
 
-  // Step 3: sum bits calculation
+  // Step 3: Complete sum logic across all 64 bits
   assign #(2) sum = p ^ {c[63:1], cin};
 
 endmodule
