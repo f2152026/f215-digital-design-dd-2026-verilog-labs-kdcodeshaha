@@ -7,27 +7,25 @@ module cla64_flat(
 );
 
   wire [63:0] p, g;
-  wire [64:1] c;   // c[1]..c[64] are the 64 carries; cin is c[0]
+  wire [64:0] c;
 
-  // Step 1: P and G logic
+  // Step 1: Bitwise Generate (g) and Propagate (p) signals
+  assign #(2) p = a ^ b;
+  assign #(2) g = a & b;
+
+  // Set initial carry-in
+  assign c[0] = cin;
+
+  // Step 2: Generate all 64 carry bits using expand-on-fly or iterative calculation
   genvar i;
   generate
-    for (i = 0; i < 64; i = i + 1) begin : gen_pg
-      xor #(2) (p[i], a[i], b[i]);
-      and #(2) (g[i], a[i], b[i]);
+    for (i = 0; i < 64; i = i + 1) begin : gen_carry
+      assign #(2) c[i+1] = g[i] | (p[i] & c[i]);
     end
   endgenerate
 
-  // Step 2: Write/generate assign #(2) c[1] through c[64]
-  assign #(2) c[1] = g[0] | (p[0] & cin);
-  assign #(2) c[2] = g[1] | (p[1] & g[0]) | (p[1] & p[0] & cin);
-  assign #(2) c[3] = g[2] | (p[2] & g[1]) | (p[2] & p[1] & g[0]) | (p[2] & p[1] & p[0] & cin);
-  assign #(2) c[4] = g[3] | (p[3] & g[2]) | (p[3] & p[2] & g[1]) | (p[3] & p[2] & p[1] & g[0]) | (p[3] & p[2] & p[1] & p[0] & cin);
-  // ... (c[5] through c[64] must all be assigned)
-
+  // Step 3: Compute sum bits and final carry out
+  assign #(2) sum = p ^ c[63:0];
   assign cout = c[64];
-
-  // Step 3: Complete sum logic across all 64 bits
-  assign #(2) sum = p ^ {c[63:1], cin};
 
 endmodule
