@@ -1,5 +1,4 @@
 
-
 // lut.v
 module lut #(
   parameter WIDTH = 8,
@@ -25,4 +24,5 @@ module lut #(
   end
 
 endmodule
+
 
