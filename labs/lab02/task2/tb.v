@@ -1,4 +1,4 @@
-/ tb.v
+
 module tb;
 
   localparam N = 8;              // number of ROM locations to test
@@ -47,4 +47,4 @@ module tb;
     $monitor($time, " sel=%0d | dout=%0d", t_sel, t_dout);
 
 endmodule
- 
+
