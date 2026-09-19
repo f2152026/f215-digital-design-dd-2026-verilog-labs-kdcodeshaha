@@ -1,3 +1,5 @@
+
+// tb.v  (Task 3: self-checking testbench for comp2)
 module tb;
 
   reg  [1:0] t_a, t_b;

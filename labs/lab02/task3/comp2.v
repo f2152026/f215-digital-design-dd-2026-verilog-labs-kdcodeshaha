@@ -1,4 +1,5 @@
-odule comp2 (
+
+module comp2 (
   input  [1:0] A,
   input  [1:0] B,
   output       GT,
@@ -11,4 +12,5 @@ odule comp2 (
   assign LT = (A <  B);
 
 endmodule
+
 
