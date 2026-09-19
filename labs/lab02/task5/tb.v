@@ -8,7 +8,7 @@ module tb;
   integer    i, j, errors, total;
 
   alu DUT (
-    .a      (t_a),
+    .a      (t_a), 
     .b      (t_b),
     .op     (t_op),
     .result (t_result)
